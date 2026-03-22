@@ -191,7 +191,8 @@ def main():
                 else:
                     # Internet is down and album changed → log once per new cover
                     if art_url != last_failed_art_url:
-                        logging.warning(f"{RED}Track changed — cover update skipped (no internet).{RESET}")                        last_failed_art_url = art_url
+                        logging.warning(f"{RED}Track changed — cover update skipped (no internet).{RESET}")
+                        last_failed_art_url = art_url
 
             time.sleep(1)
 
