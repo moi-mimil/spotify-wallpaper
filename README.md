@@ -18,7 +18,7 @@ Automatically updates your GNOME wallpaper with the currently playing Spotify al
 
 ## 📸 Preview
 
-> *(Add a screenshot here later — this really helps your repo stand out)*
+![Preview](assets/preview.png)
 
 ---
 
