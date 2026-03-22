@@ -35,7 +35,7 @@
 ## ⚙️ Requirements
 
 * Linux (GNOME desktop)
-* Spotify (running, installed WITHOUT sandbox mode -eg. snap installs)
+* Spotify must be **running** and installed via the ***official*** package (Snap versions may block DBus access)
 * Python 3.8+
 
 ### Python dependencies
@@ -49,7 +49,7 @@ pip install -r requirements.txt
 ## 🚀 Usage
 
 ```bash
-python spotify-wallpaper.py
+python3 spotify-wallpaper.py
 ```
 
 That’s it. The wallpaper will automatically update when the track changes.
@@ -82,7 +82,7 @@ pip install -r requirements.txt
 Run:
 
 ```bash
-python spotify-wallpaper.py
+python3 spotify-wallpaper.py
 ```
 
 ---
