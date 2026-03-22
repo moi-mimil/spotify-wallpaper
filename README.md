@@ -19,6 +19,8 @@ Automatically updates your GNOME wallpaper with the currently playing Spotify al
 ## 📸 Preview
 
 ![Preview](assets/preview1.png)
+<p align="center">────</p>
+
 ![Preview](assets/preview2.png)
 
 ---
@@ -98,13 +100,12 @@ python spotify-wallpaper.py
 ## 📁 Project Structure
 
 ```
-.
-├── spotify-wallpaper.py
-├── requirements.txt
-├── README.md
-├── LICENSE
-├──.gitignore
-└── album_cache/        # (optional, ignored)
+┌── spotify-wallpaper.py
+. ├── requirements.txt
+  ├── README.md
+  ├── LICENSE
+  ├──.gitignore
+  └── asstes/
 ```
 
 ---
@@ -127,5 +128,7 @@ This project is licensed under the MIT License.
 ## 🤝 Contributing
 
 Feel free to open issues or submit pull requests if you have ideas or improvements!
+
+### Made by [me](https://github.com/moi-mimil)
 
 ---
