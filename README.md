@@ -25,7 +25,7 @@ Automatically updates your GNOME wallpaper with the currently playing Spotify al
 ## ⚙️ Requirements
 
 * Linux (GNOME desktop)
-* Spotify (running)
+* Spotify (running, installed WITHOUT sandbox mode -eg. snap installs)
 * Python 3.8+
 
 ### Python dependencies
@@ -46,12 +46,20 @@ That’s it. The wallpaper will automatically update when the track changes.
 
 ---
 
-## 📦 Installation (optional)
+## 📦 Installation
+### (This <i><b>will</b></i> depend on whether you use a debian based linux or not)
+
+for debian, you'll add this first:
+```bash
+sudo apt update
+sudo apt install dbus
+```
+#### then either way you need this:
 
 Clone the repo:
 
 ```bash
-git clone https://github.com/your-username/spotify-wallpaper.git
+git clone https://github.com/moi-mimil/spotify-wallpaper.git
 cd spotify-wallpaper
 ```
 
@@ -94,6 +102,7 @@ python spotify-wallpaper.py
 ├── requirements.txt
 ├── README.md
 ├── LICENSE
+├──.gitignore
 └── album_cache/        # (optional, ignored)
 ```
 
