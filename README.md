@@ -1,8 +1,13 @@
-# 🎧 Spotify Wallpaper
+<div align="center">
+  <h2> 🎧 Spotify Wallpaper </h2>
 
-Automatically updates your GNOME wallpaper with the currently playing Spotify album cover.
-
----
+  Automatically updates your GNOME wallpaper with the currently playing Spotify album cover.
+  <br>
+  ![Python](https://img.shields.io/badge/python-3.8+-blue)
+  ![License](https://img.shields.io/badge/license-MIT-green)
+  ![GitHub issues](https://img.shields.io/github/issues/moi-mimil/spotify-wallpaper)
+  ---
+</div>
 
 ## ✨ Features
 
@@ -16,12 +21,14 @@ Automatically updates your GNOME wallpaper with the currently playing Spotify al
 
 ---
 
-## 📸 Preview
+<div align="center">
+  <h3> 📸 Preview </h3>
+</div>
 
-![Preview](assets/preview1.png)
-<p align="center">────</p>
-
-![Preview](assets/preview2.png)
+<div align="center">
+  <img src="assets/preview1.png" alt="Preview 1" width="300"/>
+  <img src="assets/preview2.png" alt="Preview 2" width="300"/>
+</div>
 
 ---
 
@@ -100,12 +107,13 @@ python spotify-wallpaper.py
 ## 📁 Project Structure
 
 ```
-┌── spotify-wallpaper.py
-. ├── requirements.txt
-  ├── README.md
-  ├── LICENSE
-  ├──.gitignore
-  └── assets/
+.
+├── spotify-wallpaper.py
+├── requirements.txt
+├── README.md
+├── LICENSE
+├── .gitignore
+└── assets/
 ```
 
 ---
