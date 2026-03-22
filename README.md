@@ -105,7 +105,7 @@ python spotify-wallpaper.py
   ├── README.md
   ├── LICENSE
   ├──.gitignore
-  └── asstes/
+  └── assets/
 ```
 
 ---
