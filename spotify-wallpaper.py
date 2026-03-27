@@ -19,7 +19,7 @@ from typing import Optional, Tuple
 
 import dbus
 import requests
-from PIL import Image, ImageFilter
+from PIL import Image, ImageFilter, ImageDraw, ImageFont
 
 # -------------------
 # Constants
@@ -27,7 +27,7 @@ from PIL import Image, ImageFilter
 CURRENT_COVER = "current-cover.png"  # temporary cover
 FINAL_COVER = "cover.png"
 CACHE_DIR = "album_cache"           # optional cache directory
-SCALE_HEIGHT = 0.75
+SCALE_HEIGHT = 1  # scale cover to 100% of screen height for better aesthetics
 
 RED = "\033[91m"
 RESET = "\033[0m"
@@ -48,13 +48,54 @@ def get_screen_resolution() -> Tuple[int, int]:
     except Exception:
         logging.warning("Failed to detect resolution; using 1366x768")
         return 1366, 768
+    
+def average_rgb(image_path):
+    """
+    Calculate the average RGB value of an image.
+    
+    Args:
+        image_path (str): Path to the image file.
+    
+    Returns:
+        tuple: (avg_r, avg_g, avg_b)
+    """
+    image = Image.open(image_path).convert("RGB")
+    pixels = list(image.getdata())
+    total_pixels = len(pixels)
+    
+    sum_r = sum_g = sum_b = 0
+    for r, g, b in pixels:
+        sum_r += r
+        sum_g += g
+        sum_b += b
+    
+    avg_r = round(sum_r / total_pixels)
+    avg_g = round(sum_g / total_pixels)
+    avg_b = round(sum_b / total_pixels)
+    
+    return (avg_r, avg_g, avg_b)
 
-def create_centered_cover(input_path: str, output_path: str, final_width: int, final_height: int):
-    """Create a centered album cover with blurred background."""
+def complementary_color(rgb):
+    """
+    Returns the complementary color for an RGB tuple.
+    
+    Parameters:
+        rgb (tuple): A tuple of three integers (R, G, B), each 0-255.
+        
+    Returns:
+        tuple: Complementary RGB color.
+    """
+    r, g, b = rgb
+    return (255 - r, 255 - g, 255 - b)
+
+def create_centered_cover(input_path: str, output_path: str, final_width: int, final_height: int, track_title: str = "", title_condition: bool = True):
+    """Create a centered album cover with blurred background and track title below."""
     cover = Image.open(input_path).convert("RGB")
+    
     # blurred background
     background = cover.resize((final_width, final_height), Image.LANCZOS)
     background = background.filter(ImageFilter.GaussianBlur(20))
+
     # scale cover
     max_height = int(final_height * SCALE_HEIGHT)
     ratio = cover.width / cover.height
@@ -66,11 +107,39 @@ def create_centered_cover(input_path: str, output_path: str, final_width: int, f
         new_height = min(cover.height, max_height)
         new_width = int(new_height * ratio)
     cover_resized = cover.resize((new_width, new_height), Image.LANCZOS)
+
+    # paste cover on background
     x_offset = (final_width - new_width) // 2
     y_offset = (final_height - new_height) // 2
     background.paste(cover_resized, (x_offset, y_offset))
+
+    # -----------------------
+    # Add track title text
+    # -----------------------
+    if track_title and title_condition:
+        draw = ImageDraw.Draw(background)
+        avg_color = average_rgb(input_path)
+        text_color = complementary_color(avg_color)
+
+        # choose a font and size (you may need a .ttf path)
+        try:
+            font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 40)
+        except IOError:
+            font = ImageFont.load_default()
+
+        # get text bounding box
+        bbox = draw.textbbox((0, 0), track_title, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+
+        # position text below the cover
+        text_x = (final_width - text_width) // 2
+        text_y = y_offset + new_height + 10  # 10px below the cover
+
+        draw.text((text_x, text_y), track_title, fill=text_color, font=font)
+
     background.save(output_path)
-    logging.info("Wallpaper created: %s", output_path)
+    logging.info("Wallpaper created with title: %s", output_path)
 
 def get_spotify_metadata() -> Tuple[Optional[str], Optional[str], Optional[str]]:
     """Get currently playing Spotify track info."""
@@ -137,11 +206,11 @@ def is_connected() -> bool:
 # Main Loop
 # -------------------
 def main():
+    previous_title: Optional[str] = None
     last_art_url: Optional[str] = None
-    last_failed_art_url: Optional[str] = None  # tracks last failed cover
+    was_offline = False
     width, height = get_screen_resolution()
-    was_offline = False  # tracks general offline status
-    previous_title = None
+    display_title = input("Display track title on wallpaper? (y/n):\n").strip().lower() == 'y'
 
     try:
         while True:
@@ -149,14 +218,12 @@ def main():
             # 1️⃣ Check internet connection
             # -------------------------
             online = is_connected()
-            if not online:
-                if not was_offline:
-                    logging.error(f"{RED}No internet connection! Album covers won't update.{RESET}")
-                    was_offline = True
-            else:
-                if was_offline:
-                    logging.info("\033[92mInternet connection restored. Resuming album cover updates.\033[0m")
-                    was_offline = False
+            if not online and not was_offline:
+                logging.error(f"{RED}No internet connection! Album covers won't update.{RESET}")
+                was_offline = True
+            elif online and was_offline:
+                logging.info("\033[92mInternet connection restored. Resuming album cover updates.\033[0m")
+                was_offline = False
 
             # -------------------------
             # 2️⃣ Get Spotify metadata
@@ -167,37 +234,32 @@ def main():
                 time.sleep(1)
                 continue
 
-            # Log only on track change
+            # -------------------------
+            # 3️⃣ Update wallpaper on new track
+            # -------------------------
             if title != previous_title:
                 logging.info("Now playing: %s - %s", title, artist)
-                previous_title = title
 
-            # -------------------------
-            # 3️⃣ Decide whether to update wallpaper
-            # -------------------------
-            if art_url and (art_url != last_art_url or not os.path.exists(CURRENT_COVER)):
-                if online:
-                    success = download_album_cover(art_url)
-                    if success:
-                        create_centered_cover(CURRENT_COVER, FINAL_COVER, width, height)
-                        set_wallpaper()
+                # Download album cover if URL changed or missing
+                if art_url and (art_url != last_art_url or not os.path.exists(CURRENT_COVER)):
+                    if online and download_album_cover(art_url):
                         last_art_url = art_url
-                        last_failed_art_url = None  # reset failed tracker
                     else:
-                        # Download failed; log once per new album
-                        if art_url != last_failed_art_url:
-                            logging.warning(f"{RED}Failed to download album cover: {art_url}{RESET}")
-                            last_failed_art_url = art_url
+                        logging.warning(f"{RED}Failed to download album cover or offline.{RESET}")
+
+                # Always create wallpaper with current title if we have a cover
+                if os.path.exists(CURRENT_COVER):
+                    create_centered_cover(CURRENT_COVER, FINAL_COVER, width, height, title, display_title)
+                    set_wallpaper()
                 else:
-                    # Internet is down and album changed → log once per new cover
-                    if art_url != last_failed_art_url:
-                        logging.warning(f"{RED}Track changed — cover update skipped (no internet).{RESET}")
-                        last_failed_art_url = art_url
+                    logging.warning(f"{RED}No cover available to create wallpaper.{RESET}")
+
+                previous_title = title
 
             time.sleep(1)
 
     except KeyboardInterrupt:
-        logging.info("Exiting wallpaper updater...")
+        logging.info("Exiting wallpaper updater...\n \033[92mGoodbye!\033[0m")
 
 if __name__ == "__main__":
     main()
