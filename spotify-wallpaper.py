@@ -46,9 +46,9 @@ def get_screen_resolution():
                 width, height = map(int, res.split('x'))
                 return width, height
         # fallback
-        return 1366, 768
+        return 1920, 1080
     except Exception:
-        return 1366, 768
+        return 1920, 1080
     
 def average_rgb(image_path):
     """
@@ -215,6 +215,7 @@ def main():
     last_art_url: Optional[str] = None
     was_offline = False
     width, height = get_screen_resolution()
+    logging.info(f"Detected screen resolution: {width}x{height}")
     display_title = input("Display track title on wallpaper? (y/n):\n").strip().lower() == 'y'
 
     try:
