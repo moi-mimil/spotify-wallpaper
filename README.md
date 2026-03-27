@@ -57,14 +57,6 @@ That’s it. The wallpaper will automatically update when the track changes.
 ---
 
 ## 📦 Installation
-### (This <i><b>will</b></i> depend on whether you use a debian based linux or not)
-
-for debian, you'll add this first:
-```bash
-sudo apt update
-sudo apt install dbus
-```
-#### then either way you need this:
 
 Clone the repo:
 
