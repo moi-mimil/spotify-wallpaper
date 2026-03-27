@@ -27,7 +27,7 @@ from PIL import Image, ImageFilter, ImageDraw, ImageFont
 CURRENT_COVER = "current-cover.png"  # temporary cover
 FINAL_COVER = "cover.png"
 CACHE_DIR = "album_cache"           # optional cache directory
-SCALE_HEIGHT = 1  # scale cover to 100% of screen height for better aesthetics
+SCALE_HEIGHT = 0.75  # scale cover to 75% of screen height for better aesthetics
 
 RED = "\033[91m"
 RESET = "\033[0m"
@@ -37,16 +37,17 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 # -------------------
 # Utility Functions
 # -------------------
-def get_screen_resolution() -> Tuple[int, int]:
-    """Get primary monitor resolution."""
+def get_screen_resolution():
     try:
-        output = subprocess.check_output("xrandr | grep '*' | awk '{print $1}'", shell=True)
-        resolution = output.decode().split()[0]
-        width, height = map(int, resolution.split('x'))
-        logging.info("Detected screen resolution: %dx%d", width, height)
-        return width, height
+        output = subprocess.check_output("xrandr --query", shell=True).decode()
+        for line in output.splitlines():
+            if " connected primary" in line:
+                res = line.split()[2].split("+")[0]
+                width, height = map(int, res.split('x'))
+                return width, height
+        # fallback
+        return 1366, 768
     except Exception:
-        logging.warning("Failed to detect resolution; using 1366x768")
         return 1366, 768
     
 def average_rgb(image_path):
@@ -88,7 +89,7 @@ def complementary_color(rgb):
     r, g, b = rgb
     return (255 - r, 255 - g, 255 - b)
 
-def create_centered_cover(input_path: str, output_path: str, final_width: int, final_height: int, track_title: str = "", title_condition: bool = True):
+def create_centered_cover(input_path: str, output_path: str, final_width: int, final_height: int, track_title: str = "", title_condition: bool = True, screen_width: int = 1366):
     """Create a centered album cover with blurred background and track title below."""
     cover = Image.open(input_path).convert("RGB")
     
@@ -123,8 +124,12 @@ def create_centered_cover(input_path: str, output_path: str, final_width: int, f
 
         # choose a font and size (you may need a .ttf path)
         try:
-            font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 40)
+            # Use a system font or provide a path to a .ttf file
+            font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+            font_size = screen_width//30  # adjust this to make text bigger or smaller
+            font = ImageFont.truetype(font_path, font_size)
         except IOError:
+            logging.warning("Font file not found, using default font.")
             font = ImageFont.load_default()
 
         # get text bounding box
@@ -134,7 +139,7 @@ def create_centered_cover(input_path: str, output_path: str, final_width: int, f
 
         # position text below the cover
         text_x = (final_width - text_width) // 2
-        text_y = y_offset + new_height + 10  # 10px below the cover
+        text_y = y_offset + new_height + 25  # 25px below the cover
 
         draw.text((text_x, text_y), track_title, fill=text_color, font=font)
 
@@ -249,7 +254,7 @@ def main():
 
                 # Always create wallpaper with current title if we have a cover
                 if os.path.exists(CURRENT_COVER):
-                    create_centered_cover(CURRENT_COVER, FINAL_COVER, width, height, title, display_title)
+                    create_centered_cover(CURRENT_COVER, FINAL_COVER, width, height, title, display_title, width)
                     set_wallpaper()
                 else:
                     logging.warning(f"{RED}No cover available to create wallpaper.{RESET}")
