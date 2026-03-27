@@ -34,11 +34,15 @@
 
 ## ⚙️ Requirements
 
+* Sudo privileges are ***not*** required (unless missing key dependencies)
 * Linux (GNOME desktop)
 * Spotify must be **running** and installed via the ***official*** package (Snap versions may block DBus access)
+* DBus is required (usually pre-installed on modern GNOME desktops)
 * Python 3.8+
 
 ### Python dependencies
+
+> These Python packages are not included by default. Install them with:
 
 ```bash
 pip install -r requirements.txt
