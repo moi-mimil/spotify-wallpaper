@@ -13,16 +13,16 @@
 
 * 🎵 Syncs wallpaper with Spotify in real time (via MPRIS / DBus)
 * 🖼️ Generates a blurred background with centered album art
+* 📝 Optionally displays the currently playing track title below the album cover
 * 📺 Adapts to your screen resolution automatically
 * 🌐 Handles offline mode gracefully
-* ⚡ Avoids redundant downloads (same album cover)
 * 🧠 Clean logging with useful status messages
-* 🛑 Safe exit with `Ctrl+C`
+* 🛑 Safe exit with ``Ctrl+C``
 
 ---
 
 <div align="center">
-  <h3> 📸 Preview </h3>
+  <h2> 📸 Preview </h2>
 </div>
 
 <div align="center">
@@ -31,7 +31,17 @@
 </div>
 
 ---
+## 🎶 Track Title on Wallpaper
+The updater can optionally display the currently playing track title on your wallpaper, positioned just below the album art.
+* You will be prompted when starting the script:
+```
+Display track title on wallpaper? (y/n):
+```
+* The text color is automatically chosen to contrast with the album cover for readability.
+* Works with long titles by centering them under the cover.
+* Can be toggled off if you prefer a clean wallpaper without text.
 
+  
 ## ⚙️ Requirements
 
 * Sudo privileges are ***not*** required (unless missing key dependencies)
