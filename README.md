@@ -26,8 +26,8 @@
 </div>
 
 <div align="center">
-  <img src="assets/preview1.png" alt="Preview 1" width="300"/>
-  <img src="assets/preview2.png" alt="Preview 2" width="300"/>
+  <img src="assets/preview1.png" alt="Preview 1" width="300"/>  <!-- With name tag -->
+  <img src="assets/preview2.png" alt="Preview 2" width="300"/>  <!-- Without name tag -->
 </div>
 
 ---
