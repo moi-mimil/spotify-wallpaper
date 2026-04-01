@@ -37,6 +37,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 # -------------------
 # Utility Functions
 # -------------------
+
 def get_screen_resolution():
     try:
         output = subprocess.check_output("xrandr --query", shell=True).decode()
@@ -49,7 +50,29 @@ def get_screen_resolution():
         return 1920, 1080
     except Exception:
         return 1920, 1080
-    
+
+def send_notification(title: str, message: str, icon: str = ""):
+    try:
+        bus = dbus.SessionBus()
+        obj = bus.get_object(
+            "org.freedesktop.Notifications",
+            "/org/freedesktop/Notifications"
+        )
+        interface = dbus.Interface(obj, "org.freedesktop.Notifications")
+
+        interface.Notify(
+            "Spotify Wallpaper",  # app name
+            0,
+            icon,                 # icon path
+            title,
+            message,
+            [],
+            {},
+            4000                  # duration (ms)
+        )
+    except Exception as e:
+        logging.warning(f"Notification failed: {e}")
+
 def average_rgb(image_path):
     """
     Calculate the average RGB value of an image.
@@ -187,7 +210,7 @@ def download_album_cover(url: str, save_path: str = CURRENT_COVER) -> bool:
         logging.error(f"{RED}Failed to download album cover: {e}{RESET}")
         return False
 
-def set_wallpaper(image_path: str = FINAL_COVER):
+def set_wallpaper(image_path: str = FINAL_COVER, title: str = "", artist: str = ""):
     """Set GNOME wallpaper."""
     abs_path = os.path.abspath(image_path)
     if not os.path.exists(abs_path):
@@ -196,7 +219,7 @@ def set_wallpaper(image_path: str = FINAL_COVER):
     uri = f"file://{abs_path}"
     for key in ["picture-uri","picture-uri-dark"]:
         subprocess.run(["gsettings","set","org.gnome.desktop.background", key, uri])
-    logging.info("Wallpaper updated successfully!")
+    send_notification("Spotify-wallpaper", f"Wallpaper updated successfully!\nNow playing {title} - {artist}", f"file://{abs_path}")
 
 
 def is_connected() -> bool:
@@ -256,7 +279,7 @@ def main():
                 # Always create wallpaper with current title if we have a cover
                 if os.path.exists(CURRENT_COVER):
                     create_centered_cover(CURRENT_COVER, FINAL_COVER, width, height, title, display_title, width)
-                    set_wallpaper()
+                    set_wallpaper(FINAL_COVER, title, artist)
                 else:
                     logging.warning(f"{RED}No cover available to create wallpaper.{RESET}")
 
