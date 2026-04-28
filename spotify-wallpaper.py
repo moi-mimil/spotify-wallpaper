@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Spotify Wallpaper Updater - Ultimate Edition (v3.1)
+Spotify Wallpaper Updater - Ultimate Edition (v2)
 Fixed: Dynamic smart text sizing (no more oversized titles)
 """
 
@@ -202,7 +202,7 @@ def set_wallpaper(path: str, title: str, artist: str):
 # Main
 # -------------------
 def main():
-    print("♪ Spotify Album Wallpaper Updater - Ultimate v3.1 ♪\n")
+    print("♪ Spotify Album Wallpaper Updater - Ultimate v2 ♪\n")
 
     width, height = get_screen_resolution()
     print(f"Screen resolution: {width}x{height}")
@@ -259,6 +259,6 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print(f"\n\n{GREEN}Goodbye, cutie~ Come back whenever you want 💕{RESET}")
+        print(f"\n\n{GREEN}Goodbye... Come back whenever you want {RESET}")
     except Exception as e:
         logging.error(f"{RED}Error: {e}{RESET}")
