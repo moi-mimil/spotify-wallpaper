@@ -73,7 +73,7 @@ pip install -r requirements.txt
 ```bash
 python3 spotify-wallpaper.py
 ```
-The script will prompt you 3 simple Qol question
+The script will ask you a couple of quick questions when you first run it.
 
 Then just play music on Spotify and enjoy ✨
 
