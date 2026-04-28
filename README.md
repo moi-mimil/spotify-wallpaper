@@ -106,6 +106,7 @@ python3 spotify-wallpaper.py
 
 ## ⚠️ Notes
 
+* **If the wallpaper doesn’t update, try switching to a preset wallpaper manually. The script will take over on the next track change**
 * Works best on GNOME desktop (uses gsettings)
 * Requires Spotify to be actively playing
 * Long song titles are now properly handled thanks to dynamic font sizing
