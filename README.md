@@ -86,7 +86,7 @@ Clone the repo:
 ```bash
 git clone https://github.com/moi-mimil/spotify-wallpaper.git
 cd spotify-wallpaper
-pip install -r requirements.txt
+sudo apt install python3-dbus python3-requests python3-pil
 python3 spotify-wallpaper.py
 ```
 ---
