@@ -1,23 +1,28 @@
 <div align="center">
-  <h2> 🎧 Spotify Wallpaper </h2>
-
-  Automatically updates your GNOME wallpaper with the currently playing Spotify album cover.
-  <br>
+  <h2> 🎧 Spotify Wallpaper Updater</h2>
+  <p><strong>Beautiful real-time GNOME wallpaper synced with your Spotify music</strong></p>
+  
   ![Python](https://img.shields.io/badge/python-3.8+-blue)
   ![License](https://img.shields.io/badge/license-MIT-green)
   ![GitHub issues](https://img.shields.io/github/issues/moi-mimil/spotify-wallpaper)
-  ---
+  <br><br>
+  <em>The ultimate version with smart caching, dynamic text sizing & better visuals</em>
 </div>
+
+---
 
 ## ✨ Features
 
-* 🎵 Syncs wallpaper with Spotify in real time (via MPRIS / DBus)
-* 🖼️ Generates a blurred background with centered album art
-* 📝 Optionally displays the currently playing track title below the album cover
-* 📺 Adapts to your screen resolution automatically
-* 🌐 Handles offline mode gracefully
-* 🧠 Clean logging with useful status messages
-* 🛑 Safe exit with ``Ctrl+C``
+- 🎵 **Real-time** wallpaper updates via Spotify (MPRIS/DBus)
+- 🧠 **Smart Album Caching** — Saves covers locally with clean filenames (`Album - Artist.png`)
+- 🖼️ Beautiful blurred background with perfectly centered album art
+- 📝 **Smart Text Display** — Shows track title with **dynamic font sizing** (no more overflowing text!)
+- 🌈 **Complementary text color** — Automatically picks the best contrasting color
+- 🛎️ **Desktop notifications** when the wallpaper updates
+- 📺 Automatic screen resolution detection
+- 🌐 Smart offline handling with clear feedback
+- 💾 Optional smart caching (highly recommended)
+- 🛑 Clean & graceful exit with `Ctrl+C`
 
 ---
 
@@ -26,34 +31,37 @@
 </div>
 
 <div align="center">
-  <img src="assets/preview1.png" alt="Preview 1" width="300"/>  <!-- With name tag -->
-  <img src="assets/preview2.png" alt="Preview 2" width="300"/>  <!-- Without name tag -->
+  <img src="assets/preview1.png" alt="Preview with title" width="300"/>
+  <img src="assets/preview2.png" alt="Preview without title" width="300"/>
 </div>
 
 ---
-## 🎶 Track Title on Wallpaper
-The updater can optionally display the currently playing track title on your wallpaper, positioned just below the album art.
-* You will be prompted when starting the script:
-```
-Display track title on wallpaper? (y/n):
-```
-* The text color is automatically chosen to contrast with the album cover for readability.
-* Works with long titles by centering them under the cover.
-* Can be toggled off if you prefer a clean wallpaper without text.
 
-  
+## 🎶 Track Title on Wallpaper
+
+The script can display the currently playing track title below the album cover.
+
+- Text **automatically shrinks** if the title is very long (fixed in v3.1)
+- Uses **complementary color** for better visibility on any album art
+- You can enable/disable it when starting the script
+
+---
+
+## 💡 Why this project?
+
+Most wallpaper tools are static or manual. This project turns your desktop into a live visualizer that reacts to your Spotify listening experience in real time.
+
+---
+
 ## ⚙️ Requirements
 
-* Sudo privileges are ***not*** required (unless missing key dependencies)
-* Linux (GNOME desktop)
-* Spotify must be **running** and installed via the ***official*** package (Snap versions may block DBus access)
-* DBus is required (usually pre-installed on modern GNOME desktops)
-* Python 3.8+
+- Linux with **GNOME** desktop
+- Spotify installed via the **official** .deb or Flatpak (Snap version may have DBus issues)
+- Python 3.8+
+- Internet connection (only needed to download new album covers)
 
-### Python dependencies
-
-> These Python packages are not included by default. Install them with:
-
+### Python Dependencies
+Install all required packages with:
 ```bash
 pip install -r requirements.txt
 ```
@@ -65,8 +73,9 @@ pip install -r requirements.txt
 ```bash
 python3 spotify-wallpaper.py
 ```
+The script will prompt you 3 simple Qol question
 
-That’s it. The wallpaper will automatically update when the track changes.
+Then just play music on Spotify and enjoy ✨
 
 ---
 
@@ -77,36 +86,30 @@ Clone the repo:
 ```bash
 git clone https://github.com/moi-mimil/spotify-wallpaper.git
 cd spotify-wallpaper
-```
-
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
-```
-
-Run:
-
-```bash
 python3 spotify-wallpaper.py
 ```
-
 ---
 
 ## 🧠 How it works
 
-* Uses **MPRIS (DBus)** to fetch Spotify metadata
-* Downloads the current album cover
-* Applies a blur + scaling effect using Pillow
-* Sets it as the GNOME wallpaper via `gsettings`
+* Fetches current track info using DBus (MPRIS) from Spotify
+* Uses smart album-based caching to avoid re-downloading the same album covers
+* Creates a blurred background with a nicely centered album art using Pillow
+* Automatically adjusts font size so the track title never overflows the screen
+* Chooses complementary text color for good contrast on any album cover
+* Updates the GNOME wallpaper using gsettings
+* Shows a desktop notification when the wallpaper changes
 
 ---
 
 ## ⚠️ Notes
 
-* Works on **GNOME** (uses `gsettings`)
-* Requires Spotify to be running
-* Internet is needed to fetch album covers (unless cached locally)
+* Works best on GNOME desktop (uses gsettings)
+* Requires Spotify to be actively playing
+* Long song titles are now properly handled thanks to dynamic font sizing
+* Smart caching makes repeated listens faster and saves your bandwidth
+* Internet is only needed when playing a new album for the first time
 
 ---
 
@@ -114,12 +117,14 @@ python3 spotify-wallpaper.py
 
 ```
 .
-├── spotify-wallpaper.py
+├── spotify-wallpaper.py          # Main script (v2)
 ├── requirements.txt
 ├── README.md
 ├── LICENSE
 ├── .gitignore
 └── assets/
+    ├── preview1.png
+    └── preview2.png
 ```
 
 ---
@@ -127,15 +132,6 @@ python3 spotify-wallpaper.py
 ## 📜 License
 
 This project is licensed under the MIT License.
-
----
-
-## 💡 Future ideas
-
-* CLI options (blur strength, update interval, etc.)
-* Support for KDE / other desktops
-* Packaging as a pip installable tool
-* Systemd service integration
 
 ---
 
