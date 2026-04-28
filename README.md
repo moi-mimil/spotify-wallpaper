@@ -87,6 +87,7 @@ Clone the repo:
 git clone https://github.com/moi-mimil/spotify-wallpaper.git
 cd spotify-wallpaper
 sudo apt install python3-dbus python3-requests python3-pil
+clear
 python3 spotify-wallpaper.py
 ```
 ---
